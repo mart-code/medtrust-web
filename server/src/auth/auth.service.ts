@@ -49,12 +49,13 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(dto.password, 12);
 
-    return this.dataSource.transaction(async (manager) => {
+    const createdUser = await this.dataSource.transaction(async (manager) => {
       const user = manager.create(User, {
         email: dto.email,
         passwordHash,
         role: dto.role,
       });
+      console.log(user);
       await manager.save(user);
 
       switch (dto.role) {
@@ -126,8 +127,10 @@ export class AuthService {
           break;
       }
 
-      return this.generateTokens(user);
+      return user;
     });
+
+    return this.generateTokens(createdUser);
   }
 
   async login(dto: LoginDto) {

@@ -13,35 +13,35 @@ import { ConnectionStatus } from '../../common/enums';
 @Entity('patient_doctor_connections')
 export class PatientDoctorConnection {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id?: string | null;
 
   @ManyToOne(() => PatientProfile, (p) => p.connections, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'patientId' })
-  patient: PatientProfile;
+  @JoinColumn({ name: 'patientId' })  
+  patient?: PatientProfile | null;
 
   @Column()
-  patientId: string;
+  patientId?: string | null;
 
   @ManyToOne(() => DoctorProfile, (d) => d.connections, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'doctorId' })
-  doctor: DoctorProfile;
+  doctor?: DoctorProfile | null;
 
   @Column()
-  doctorId: string;
+  doctorId?: string | null;
 
   @Column({
     type: 'enum',
     enum: ConnectionStatus,
     default: ConnectionStatus.PENDING,
   })
-  status: ConnectionStatus;
+  status?: ConnectionStatus | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
-  requestedAt: Date;
+  requestedAt?: Date | null;
 
   @Column({ type: 'timestamptz', nullable: true })
-  respondedAt: Date;
+  respondedAt?: Date | null;
 
   @Column({ type: 'text', nullable: true })
-  notes: string;
+  notes?: string | null;
 }

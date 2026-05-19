@@ -118,8 +118,14 @@ export default function RegisterRolePage() {
   const onSubmit = async (data: AnyFormData) => {
     setServerError('');
     try {
+      // The backend DTO doesn't expect confirmPassword, so we remove it
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { confirmPassword, ...payload } = data as any;
+      console.log(payload);
+      console.log(config.roleId)
+
       const { data: res } = await api.post('/auth/register', {
-        ...data,
+        ...payload,
         role: config.roleId,
       });
       const { accessToken, refreshToken } = res.data ?? res;
@@ -156,7 +162,7 @@ export default function RegisterRolePage() {
             </div>
             <div className="space-y-1">
               <Label>Confirm</Label>
-              <Input type="password" placeholder="Repeat password" {...register('confirmPassword')} />
+              <Input type="password" placeholder="Repeat password"/>
               {err.confirmPassword && <p className="text-xs text-destructive">{err.confirmPassword.message}</p>}
             </div>
           </div>

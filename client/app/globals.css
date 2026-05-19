@@ -67,6 +67,7 @@
   --color-ring: hsl(var(--ring));
   --font-sans: var(--font-geist-sans), Arial, sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
+  --font-display: var(--font-playfair);
 }
 
 body {
@@ -78,3 +79,8 @@ body {
 * {
   border-color: hsl(var(--border));
 }
+
+.glass-card {
+  @apply bg-white/70 backdrop-blur-md;
+}
+
