@@ -1,236 +1,59 @@
-// 'use client';
-// import { useState } from 'react';
-// import Link from 'next/link';
-// import { useRouter } from 'next/navigation';
-// import { Button } from '@/components/ui/button';
-// import { Input } from '@/components/ui/input';
-// import { Badge } from '@/components/ui/badge';
-// import { Search, Stethoscope, Brain, Map, BookOpen, Shield, ChevronRight } from 'lucide-react';
-
-// const EXAMPLE_CONDITIONS = [
-//   'Diabetes management',
-//   'Back pain',
-//   'Skin rash',
-//   'Mental health support',
-//   'Hypertension',
-//   'Eye care',
-// ];
-
-// const FEATURES = [
-//   {
-//     icon: Stethoscope,
-//     title: 'Find the Right Doctor',
-//     description:
-//       'Search doctors by health condition, specialisation, or expertise. Connect anonymously and securely.',
-//   },
-//   {
-//     icon: Brain,
-//     title: 'AI Health Analysis',
-//     description:
-//       'Describe your symptoms or upload an image for instant AI-powered health insights — powered by Claude.',
-//   },
-//   {
-//     icon: BookOpen,
-//     title: 'Health Programmes',
-//     description:
-//       'Join organisation-run programmes tailored to specific conditions. Get structured support and guidance.',
-//   },
-//   {
-//     icon: Map,
-//     title: 'Nearby Medical Centres',
-//     description:
-//       'Discover approved clinics, hospitals, and labs near you on an interactive map.',
-//   },
-//   {
-//     icon: Shield,
-//     title: 'Patient Privacy First',
-//     description:
-//       'Your full identity is never shared. Doctors and programmes only see your initials.',
-//   },
-// ];
-
-// export default function LandingPage() {
-//   const [query, setQuery] = useState('');
-//   const router = useRouter();
-
-//   const handleSearch = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (query.trim()) {
-//       router.push(`/search/doctors?q=${encodeURIComponent(query.trim())}`);
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex flex-col">
-//       <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
-//         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-//           <div className="flex items-center gap-2">
-//             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-//               <span className="text-white font-bold text-sm">M</span>
-//             </div>
-//             <span className="font-bold text-lg">MedTrust</span>
-//           </div>
-//           <nav className="flex items-center gap-3">
-//             <Link href="/programmes" className="text-sm text-muted-foreground hover:text-foreground hidden sm:block">
-//               Programmes
-//             </Link>
-//             <Link href="/institutions" className="text-sm text-muted-foreground hover:text-foreground hidden sm:block">
-//               Institutions
-//             </Link>
-//             <Button asChild variant="ghost" size="sm">
-//               <Link href="/login">Sign in</Link>
-//             </Button>
-//             <Button asChild size="sm">
-//               <Link href="/register">Get started</Link>
-//             </Button>
-//           </nav>
-//         </div>
-//       </header>
-
-//       <section className="flex-1 flex flex-col items-center justify-center text-center px-4 py-20 bg-gradient-to-b from-primary/5 to-background">
-//         <Badge variant="secondary" className="mb-4">Trusted healthcare connections</Badge>
-//         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight max-w-2xl leading-tight">
-//           Your health,{' '}
-//           <span className="text-primary">connected</span>
-//         </h1>
-//         <p className="mt-4 text-muted-foreground max-w-xl text-lg">
-//           Find the right doctor, join health programmes, and get AI-powered insights — all in one private, secure platform.
-//         </p>
-
-//         <form onSubmit={handleSearch} className="flex gap-2 mt-8 w-full max-w-lg">
-//           <div className="relative flex-1">
-//             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-//             <Input
-//               placeholder="Search by health condition, e.g. diabetes, back pain…"
-//               className="pl-10 h-12 text-sm"
-//               value={query}
-//               onChange={(e) => setQuery(e.target.value)}
-//             />
-//           </div>
-//           <Button type="submit" size="lg" className="h-12 px-6">
-//             Find Doctors
-//           </Button>
-//         </form>
-
-//         <div className="flex flex-wrap justify-center gap-2 mt-4 max-w-lg">
-//           {EXAMPLE_CONDITIONS.map((c) => (
-//             <button
-//               key={c}
-//               type="button"
-//               onClick={() => {
-//                 setQuery(c);
-//                 router.push(`/search/doctors?q=${encodeURIComponent(c)}`);
-//               }}
-//               className="text-xs px-3 py-1 rounded-full border bg-background hover:border-primary hover:text-primary transition-colors"
-//             >
-//               {c}
-//             </button>
-//           ))}
-//         </div>
-
-//         <div className="flex gap-3 mt-8">
-//           <Button asChild size="lg">
-//             <Link href="/register">
-//               Create free account <ChevronRight className="h-4 w-4 ml-1" />
-//             </Link>
-//           </Button>
-//           <Button asChild variant="outline" size="lg">
-//             <Link href="/institutions">Explore Centres</Link>
-//           </Button>
-//         </div>
-//       </section>
-
-//       <section className="py-20 px-4 bg-background">
-//         <div className="max-w-6xl mx-auto">
-//           <h2 className="text-2xl font-bold text-center mb-12">Everything you need</h2>
-//           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-//             {FEATURES.map((f) => (
-//               <div key={f.title} className="rounded-xl border p-6 hover:border-primary/40 transition-colors">
-//                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-//                   <f.icon className="h-5 w-5 text-primary" />
-//                 </div>
-//                 <h3 className="font-semibold mb-2">{f.title}</h3>
-//                 <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       </section>
-
-//       <section className="py-16 px-4 bg-primary text-primary-foreground text-center">
-//         <h2 className="text-2xl font-bold mb-3">Ready to take control of your health?</h2>
-//         <p className="text-primary-foreground/80 mb-6 max-w-md mx-auto">
-//           Join thousands of patients and doctors already using MedTrust.
-//         </p>
-//         <Button asChild variant="secondary" size="lg">
-//           <Link href="/register">Get started for free</Link>
-//         </Button>
-//       </section>
-
-//       <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-//         <p>© {new Date().getFullYear()} MedTrust. Built for better healthcare connections.</p>
-//       </footer>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import { useEffect, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
-
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-const playfairDisplay = Playfair_Display({ variable: "--font-playfair", subsets: ["latin"] });
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Navbar from "@/components/landing/Navbar";
+import Footer from "@/components/landing/Footer";
 
 // ─── Navbar ────────────────────────────────────────────────────────────────────
-function Navbar() {
-  const headerRef = useRef<HTMLElement>(null);
+// function Navbar() {
+//   const headerRef = useRef<HTMLElement>(null);
+//   const router = useRouter();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const header = headerRef.current;
-      if (!header) return;
-      if (window.scrollY > 50) {
-        header.classList.add("py-3");
-        header.classList.remove("py-4");
-      } else {
-        header.classList.add("py-4");
-        header.classList.remove("py-3");
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+//   useEffect(() => {
+//     const handleScroll = () => {
+//       const header = headerRef.current;
+//       if (!header) return;
+//       if (window.scrollY > 50) {
+//         header.classList.add("py-3");
+//         header.classList.remove("py-4");
+//       } else {
+//         header.classList.add("py-4");
+//         header.classList.remove("py-3");
+//       }
+//     };
+//     window.addEventListener("scroll", handleScroll);
+//     return () => window.removeEventListener("scroll", handleScroll);
+//   }, []);
 
-  return (
-    <header ref={headerRef} className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg border-b border-[#bcc9c7]/20 shadow-[0_10px_30px_rgba(15,157,148,0.05)] py-4 transition-all duration-200">
-      <nav className="flex justify-between items-center max-w-7xl mx-auto px-10">
-        <div className="flex items-center gap-8">
-          <Link href="#" className="font-display text-2xl font-bold text-[#006761]">
-            MediLink
-          </Link>
-          <div className="hidden md:flex items-center gap-6">
-            <Link href="#" className="text-[#006761] font-bold border-b-2 border-[#006761] pb-1 text-sm hover:text-[#006761] transition-all duration-300">
-              Home
-            </Link>
-            {["Find Doctors", "Programs", "Institutions", "Security"].map((item) => (
-              <Link key={item} href="#" className="text-[#3d4947] text-sm hover:text-[#006761] transition-all duration-300">
-                {item}
-              </Link>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="hidden lg:block text-[#3d4947] text-sm hover:text-[#006761] transition-colors duration-200">Sign In</button>
-          <button className=" bg-cyan-700 text-white px-6 py-2.5 rounded-full text-sm font-semibold active:scale-90 transition-transform">Get Started</button>
-        </div>
-      </nav>
-    </header>
-  );
-}
+//   return (
+//     <header ref={headerRef} className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg border-b border-[#bcc9c7]/20 shadow-[0_10px_30px_rgba(15,157,148,0.05)] py-4 transition-all duration-200">
+//       <nav className="flex justify-between items-center max-w-7xl mx-auto px-10">
+//         <div className="flex items-center gap-8">
+//           <Link href="/" className="font-display text-2xl font-bold text-[#006761]">
+//             MediLink
+//           </Link>
+//           <div className="hidden md:flex items-center gap-6">
+//             <Link href="/" className="text-[#006761] font-bold border-b-2 border-[#006761] pb-1 text-sm hover:text-[#006761] transition-all duration-300">
+//               Home
+//             </Link>
+//             {["Find Doctors", "Programs", "Institutions", "Security"].map((item) => (
+//               <Link key={item} href={`/${item.toLowerCase().replace(" ", "-")}`} className="text-[#3d4947] text-sm hover:text-[#006761] transition-all duration-300">
+//                 {item}
+//               </Link>
+//             ))}
+//           </div>
+//         </div>
+//         <div className="flex items-center gap-4">
+//           <button className="hidden lg:block text-[#3d4947] text-sm hover:text-[#006761] transition-colors duration-200">Sign In</button>
+//           <button className=" bg-cyan-700 text-white px-6 py-2.5 rounded-full text-sm font-semibold active:scale-90 transition-transform">Get Started</button>
+//         </div>
+//       </nav>
+//     </header>
+//   );
+// }
 
 // ─── Hero ───────────────────────────────────────────────────────────────────────
 function Hero() {
@@ -245,12 +68,12 @@ function Hero() {
           <span className="text-sm font-semibold">Secure. Anonymous. Trusted.</span>
         </div>
 
-        <h1 className={`font-display text-5xl md:text-[48px] font-bold text-[#121c2a] leading-tight tracking-tight ${playfairDisplay.className}`}>Healthcare Without Barriers</h1>
+        <h1 className={`font-display text-5xl md:text-[48px] font-bold text-[#121c2a] leading-tight tracking-tight`}>Healthcare Without Barriers</h1>
 
         <p className="text-lg text-[#3d4947] max-w-xl leading-relaxed">Connect with verified doctors anonymously, enroll in healthcare programs, and receive secure prescriptions from anywhere in the world.</p>
 
         <div className="flex flex-wrap gap-4 pt-4">
-          <button className="btn-gradient text-white px-8 py-4 rounded-full text-sm font-semibold">Talk to a Doctor</button>
+          <button className="bg-cyan-700 text-white px-8 py-4 rounded-full text-sm font-semibold">Talk to a Doctor</button>
           <button className="border border-[#006761] text-[#006761] px-8 py-4 rounded-full text-sm font-semibold hover:bg-[#006761]/5 transition-colors">Explore Programs</button>
         </div>
 
@@ -275,6 +98,7 @@ function Hero() {
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpKZ0m8ShYNUs33vdJrYRn18uY64SGn5chlZOx8qcu8PV3lLqFBo_DkhlNWBbGIG-ZQpPsfOP9RrUAS5W7MqEMxDSvjXhD12i7uadKlNJNMfDGuHXS5h6z8tgDOp69jWpbVL9z78pWdW0aOJ6FX3AD5OCWscR_Izu1eSfguNR2SJZUv_41XhI_xfY3aVbfJniYwbspHXTgR8WoqMgvVYHtBY0xsFcQpEm8Ucr64yH3QfY4wK9jw_pgTtKPOkrE_ecLZEyGihIIQPxU"
             alt="Professional female doctor conducting a telehealth video consultation"
             fill
+            loading="eager"
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 50vw"
           />
@@ -697,88 +521,13 @@ function FinalCTA() {
   );
 }
 
-// ─── Footer ─────────────────────────────────────────────────────────────────────
-function Footer() {
-  const platformLinks = ["How it Works", "Doctor Network", "Programs", "Security"];
-  const resourceLinks = ["Blog", "Help Center", "API Access", "Partners"];
-  const companyLinks = ["About Us", "Careers", "Privacy Policy", "Contact"];
 
-  return (
-    <footer className="w-full bg-[#f8f9ff] border-t border-[#bcc9c7]/30">
-      <div className="max-w-7xl mx-auto px-10 py-20 grid grid-cols-2 md:grid-cols-5 gap-6">
-        <div className="col-span-2 space-y-6">
-          <Link href="#" className="font-display text-2xl font-bold text-[#006761] block">
-            MediLink
-          </Link>
-          <p className="text-base text-[#3d4947] max-w-sm leading-relaxed">Trust and Precision in Care. MediLink is the world&apos;s leading anonymous health network connecting people with certified medical professionals.</p>
-          <div className="flex gap-4">
-            {["public", "share", "verified_user"].map((icon) => (
-              <span key={icon} className="material-symbols-outlined text-[#006761] cursor-pointer hover:scale-110 transition-transform">
-                {icon}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h6 className="text-sm font-semibold text-[#006761] mb-6">Platform</h6>
-          <ul className="space-y-4">
-            {platformLinks.map((link) => (
-              <li key={link}>
-                <Link href="#" className="text-[#3d4947] hover:text-[#006761] transition-colors duration-200 text-sm font-semibold">
-                  {link}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h6 className="text-sm font-semibold text-[#006761] mb-6">Resources</h6>
-          <ul className="space-y-4">
-            {resourceLinks.map((link) => (
-              <li key={link}>
-                <Link href="#" className="text-[#3d4947] hover:text-[#006761] transition-colors duration-200 text-sm font-semibold">
-                  {link}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h6 className="text-sm font-semibold text-[#006761] mb-6">Company</h6>
-          <ul className="space-y-4">
-            {companyLinks.map((link) => (
-              <li key={link}>
-                <Link href="#" className="text-[#3d4947] hover:text-[#006761] transition-colors duration-200 text-sm font-semibold">
-                  {link}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-10 py-8 border-t border-[#bcc9c7]/20 flex flex-col md:flex-row justify-between items-center gap-4">
-        <span className="text-xs font-medium text-[#3d4947] opacity-80">© 2024 MediLink Healthcare Platform. Trust and Precision in Care.</span>
-        <div className="flex gap-8 text-xs text-[#3d4947] font-semibold">
-          {["Terms of Service", "HIPAA Compliance", "Cookie Policy"].map((item) => (
-            <Link key={item} href="#" className="hover:text-[#006761]">
-              {item}
-            </Link>
-          ))}
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 // ─── Page ───────────────────────────────────────────────────────────────────────
 export default function MediLinkPage() {
   return (
     <div className="bg-[#f8f9ff] text-[#121c2a] overflow-x-hidden">
-      <Navbar />
+   <Navbar />
       <main className="pt-24">
         <Hero />
         <TrustedBy />
@@ -790,7 +539,7 @@ export default function MediLinkPage() {
         <Testimonials />
         <FinalCTA />
       </main>
-      <Footer />
+  <Footer/>
     </div>
   );
 }

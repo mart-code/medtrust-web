@@ -23,7 +23,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get('access_token')?.value;
 
-  const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname === prefix);
   const isAuthRoute = AUTH_ROUTES.some(
     (r) => pathname === r || pathname.startsWith(r + '/'),
   );
