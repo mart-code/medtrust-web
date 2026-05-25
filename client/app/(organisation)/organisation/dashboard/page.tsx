@@ -1,11 +1,11 @@
-'use client';
-import { useAuthStore } from '@/store/auth.store';
-import { OrganisationProfile } from '@/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { BookOpen, Plus } from 'lucide-react';
+"use client";
+import { useAuthStore } from "@/store/store";
+import { OrganisationProfile } from "@/types";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { BookOpen, Plus } from "lucide-react";
 
 export default function OrganisationDashboard() {
   const { user } = useAuthStore();
@@ -19,28 +19,17 @@ export default function OrganisationDashboard() {
           <p className="text-muted-foreground text-sm">Health programme management</p>
         </div>
         {profile?.approvalStatus && (
-          <Badge
-            variant={
-              profile.approvalStatus === 'approved'
-                ? 'success'
-                : profile.approvalStatus === 'rejected'
-                ? 'destructive'
-                : 'warning'
-            }
-            className="capitalize"
-          >
+          <Badge variant={profile.approvalStatus === "approved" ? "success" : profile.approvalStatus === "rejected" ? "destructive" : "warning"} className="capitalize">
             {profile.approvalStatus}
           </Badge>
         )}
       </div>
 
-      {profile?.approvalStatus === 'pending' && (
+      {profile?.approvalStatus === "pending" && (
         <Card className="border-yellow-200 bg-yellow-50">
           <CardHeader className="pb-2">
             <CardTitle className="text-base text-yellow-800">Account pending review</CardTitle>
-            <CardDescription className="text-yellow-700">
-              Your organisation is being reviewed by the MedTrust admin team.
-            </CardDescription>
+            <CardDescription className="text-yellow-700">Your organisation is being reviewed by the MedTrust admin team.</CardDescription>
           </CardHeader>
         </Card>
       )}
@@ -53,7 +42,10 @@ export default function OrganisationDashboard() {
               <CardDescription>Create and manage your health programmes</CardDescription>
             </div>
             <Button asChild size="sm">
-              <Link href="/organisation/programmes/new"><Plus className="h-4 w-4 mr-1" />New Programme</Link>
+              <Link href="/organisation/programmes/new">
+                <Plus className="h-4 w-4 mr-1" />
+                New Programme
+              </Link>
             </Button>
           </div>
         </CardHeader>

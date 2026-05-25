@@ -1,105 +1,103 @@
-'use client';
-import { useParams, useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useState } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { api, setTokens } from '@/lib/api';
-import { useAuthStore } from '@/store/auth.store';
+"use client";
+import { useParams, useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuthStore } from "@/store/store";
 
 const baseSchema = {
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string(),
 };
 
-const patientSchema = z
-  .object({ ...baseSchema, firstName: z.string().min(1, 'Required'), lastName: z.string().min(1, 'Required') })
-  .refine((d) => d.password === d.confirmPassword, { message: 'Passwords do not match', path: ['confirmPassword'] });
+const patientSchema = z.object({ ...baseSchema, firstName: z.string().min(1, "Required"), lastName: z.string().min(1, "Required") }).refine((d) => d.password === d.confirmPassword, { message: "Passwords do not match", path: ["confirmPassword"] });
 
 const doctorSchema = z
   .object({
     ...baseSchema,
-    firstName: z.string().min(1, 'Required'),
-    lastName: z.string().min(1, 'Required'),
-    specialisation: z.string().min(1, 'Required'),
-    licenseNumber: z.string().min(1, 'Required'),
+    firstName: z.string().min(1, "Required"),
+    lastName: z.string().min(1, "Required"),
+    specialisation: z.string().min(1, "Required"),
+    licenseNumber: z.string().min(1, "Required"),
   })
-  .refine((d) => d.password === d.confirmPassword, { message: 'Passwords do not match', path: ['confirmPassword'] });
+  .refine((d) => d.password === d.confirmPassword, { message: "Passwords do not match", path: ["confirmPassword"] });
 
 const orgSchema = z
   .object({
     ...baseSchema,
-    organisationName: z.string().min(1, 'Required'),
-    registrationNumber: z.string().min(1, 'Required'),
+    organisationName: z.string().min(1, "Required"),
+    registrationNumber: z.string().min(1, "Required"),
   })
-  .refine((d) => d.password === d.confirmPassword, { message: 'Passwords do not match', path: ['confirmPassword'] });
+  .refine((d) => d.password === d.confirmPassword, { message: "Passwords do not match", path: ["confirmPassword"] });
 
 const institutionSchema = z
   .object({
     ...baseSchema,
-    institutionName: z.string().min(1, 'Required'),
-    institutionAddress: z.string().min(1, 'Required'),
+    institutionName: z.string().min(1, "Required"),
+    institutionAddress: z.string().min(1, "Required"),
     latitude: z.coerce.number().optional(),
     longitude: z.coerce.number().optional(),
   })
-  .refine((d) => d.password === d.confirmPassword, { message: 'Passwords do not match', path: ['confirmPassword'] });
+  .refine((d) => d.password === d.confirmPassword, { message: "Passwords do not match", path: ["confirmPassword"] });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyFormData = any;
 
-const ROLE_CONFIG: Record<
-  string,
-  { title: string; description: string; schema: z.ZodType; roleId: string }
-> = {
+const ROLE_CONFIG: Record<string, { title: string; description: string; schema: z.ZodType; roleId: string }> = {
   patient: {
-    title: 'Create Patient Account',
-    description: 'Start finding doctors and health programmes.',
+    title: "Create Patient Account",
+    description: "Start finding doctors and health programmes.",
     schema: patientSchema,
-    roleId: 'patient',
+    roleId: "patient",
   },
   doctor: {
-    title: 'Create Doctor Account',
-    description: 'Your account will be reviewed by our admin team.',
+    title: "Create Doctor Account",
+    description: "Your account will be reviewed by our admin team.",
     schema: doctorSchema,
-    roleId: 'doctor',
+    roleId: "doctor",
   },
   organisation: {
-    title: 'Register your Organisation',
-    description: 'Create health programmes for your community.',
+    title: "Register your Organisation",
+    description: "Create health programmes for your community.",
     schema: orgSchema,
-    roleId: 'organisation',
+    roleId: "organisation",
   },
   institution: {
-    title: 'Register Medical Centre',
-    description: 'List your clinic or hospital on MedTrust.',
+    title: "Register Medical Centre",
+    description: "List your clinic or hospital on MedTrust.",
     schema: institutionSchema,
-    roleId: 'institution',
+    roleId: "institution",
   },
 };
 
 const ROLE_DASHBOARDS: Record<string, string> = {
-  patient: '/patient/dashboard',
-  doctor: '/doctor/dashboard',
-  organisation: '/organisation/dashboard',
-  institution: '/institution/dashboard',
+  patient: "/patient/dashboard",
+  doctor: "/doctor/dashboard",
+  organisation: "/organisation/dashboard",
+  institution: "/institution/dashboard",
 };
 
 export default function RegisterRolePage() {
   const { role } = useParams<{ role: string }>();
   const router = useRouter();
-  const { fetchMe } = useAuthStore();
-  const [serverError, setServerError] = useState('');
+  const { register: registerUser } = useAuthStore();
+  const [serverError, setServerError] = useState("");
 
   const config = ROLE_CONFIG[role];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<AnyFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<AnyFormData>({
     resolver: zodResolver((config?.schema ?? patientSchema) as any),
   });
 
@@ -108,7 +106,10 @@ export default function RegisterRolePage() {
       <Card>
         <CardContent className="pt-6 text-center">
           <p className="text-muted-foreground">
-            Unknown role. <Link href="/register" className="text-primary">Go back</Link>
+            Unknown role.{" "}
+            <Link href="/register" className="text-primary">
+              Go back
+            </Link>
           </p>
         </CardContent>
       </Card>
@@ -116,26 +117,20 @@ export default function RegisterRolePage() {
   }
 
   const onSubmit = async (data: AnyFormData) => {
-    setServerError('');
+    setServerError("");
     try {
       // The backend DTO doesn't expect confirmPassword, so we remove it
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...payload } = data as any;
-      console.log(payload);
-      console.log(config.roleId)
-
-      const { data: res } = await api.post('/auth/register', {
+      await registerUser({
         ...payload,
         role: config.roleId,
       });
-      const { accessToken, refreshToken } = res.data ?? res;
-      setTokens(accessToken, refreshToken);
-      await fetchMe();
-      router.push(ROLE_DASHBOARDS[role] ?? '/');
+      router.push(ROLE_DASHBOARDS[role] ?? "/");
     } catch (err: unknown) {
       const axiosErr = err as { response?: { data?: { message?: string | string[] } } };
       const msg = axiosErr?.response?.data?.message;
-      setServerError(Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Registration failed.'));
+      setServerError(Array.isArray(msg) ? msg.join(", ") : (msg ?? "Registration failed."));
     }
   };
 
@@ -151,109 +146,109 @@ export default function RegisterRolePage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1">
             <Label>Email</Label>
-            <Input type="email" placeholder="you@example.com" {...register('email')} />
+            <Input type="email" placeholder="you@example.com" {...register("email")} />
             {err.email && <p className="text-xs text-destructive">{err.email.message}</p>}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label>Password</Label>
-              <Input type="password" placeholder="Min. 8 chars" {...register('password')} />
+              <Input type="password" placeholder="Min. 8 chars" {...register("password")} />
               {err.password && <p className="text-xs text-destructive">{err.password.message}</p>}
             </div>
             <div className="space-y-1">
               <Label>Confirm</Label>
-              <Input type="password" placeholder="Repeat password"/>
+              <Input type="password" placeholder="Repeat password" {...register("confirmPassword")} />
               {err.confirmPassword && <p className="text-xs text-destructive">{err.confirmPassword.message}</p>}
             </div>
           </div>
 
-          {(role === 'patient' || role === 'doctor') && (
+          {(role === "patient" || role === "doctor") && (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label>First name</Label>
-                <Input {...register('firstName')} />
+                <Input {...register("firstName")} />
                 {err.firstName && <p className="text-xs text-destructive">{err.firstName.message}</p>}
               </div>
               <div className="space-y-1">
                 <Label>Last name</Label>
-                <Input {...register('lastName')} />
+                <Input {...register("lastName")} />
                 {err.lastName && <p className="text-xs text-destructive">{err.lastName.message}</p>}
               </div>
             </div>
           )}
 
-          {role === 'doctor' && (
+          {role === "doctor" && (
             <>
               <div className="space-y-1">
                 <Label>Specialisation</Label>
-                <Input placeholder="e.g. Cardiology, Dermatology" {...register('specialisation')} />
+                <Input placeholder="e.g. Cardiology, Dermatology" {...register("specialisation")} />
                 {err.specialisation && <p className="text-xs text-destructive">{err.specialisation.message}</p>}
               </div>
               <div className="space-y-1">
                 <Label>Medical License Number</Label>
-                <Input placeholder="License / registration number" {...register('licenseNumber')} />
+                <Input placeholder="License / registration number" {...register("licenseNumber")} />
                 {err.licenseNumber && <p className="text-xs text-destructive">{err.licenseNumber.message}</p>}
               </div>
             </>
           )}
 
-          {role === 'organisation' && (
+          {role === "organisation" && (
             <>
               <div className="space-y-1">
                 <Label>Organisation Name</Label>
-                <Input {...register('organisationName')} />
+                <Input {...register("organisationName")} />
                 {err.organisationName && <p className="text-xs text-destructive">{err.organisationName.message}</p>}
               </div>
               <div className="space-y-1">
                 <Label>Registration Number</Label>
-                <Input {...register('registrationNumber')} />
+                <Input {...register("registrationNumber")} />
                 {err.registrationNumber && <p className="text-xs text-destructive">{err.registrationNumber.message}</p>}
               </div>
             </>
           )}
 
-          {role === 'institution' && (
+          {role === "institution" && (
             <>
               <div className="space-y-1">
                 <Label>Institution Name</Label>
-                <Input {...register('institutionName')} />
+                <Input {...register("institutionName")} />
                 {err.institutionName && <p className="text-xs text-destructive">{err.institutionName.message}</p>}
               </div>
               <div className="space-y-1">
                 <Label>Address</Label>
-                <Input placeholder="Full street address" {...register('institutionAddress')} />
+                <Input placeholder="Full street address" {...register("institutionAddress")} />
                 {err.institutionAddress && <p className="text-xs text-destructive">{err.institutionAddress.message}</p>}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label>Latitude <span className="text-muted-foreground">(optional)</span></Label>
-                  <Input type="number" step="any" placeholder="e.g. 5.6037" {...register('latitude')} />
+                  <Label>
+                    Latitude <span className="text-muted-foreground">(optional)</span>
+                  </Label>
+                  <Input type="number" step="any" placeholder="e.g. 5.6037" {...register("latitude")} />
                 </div>
                 <div className="space-y-1">
-                  <Label>Longitude <span className="text-muted-foreground">(optional)</span></Label>
-                  <Input type="number" step="any" placeholder="e.g. -0.1870" {...register('longitude')} />
+                  <Label>
+                    Longitude <span className="text-muted-foreground">(optional)</span>
+                  </Label>
+                  <Input type="number" step="any" placeholder="e.g. -0.1870" {...register("longitude")} />
                 </div>
               </div>
             </>
           )}
 
-          {serverError && (
-            <p className="text-sm text-destructive bg-destructive/10 rounded-md px-3 py-2">{serverError}</p>
-          )}
+          {serverError && <p className="text-sm text-destructive bg-destructive/10 rounded-md px-3 py-2">{serverError}</p>}
 
-          {(role === 'doctor' || role === 'institution' || role === 'organisation') && (
-            <p className="text-xs text-muted-foreground bg-muted rounded-md px-3 py-2">
-              Your account will be reviewed and approved by the MedTrust admin team before full access is granted.
-            </p>
-          )}
+          {(role === "doctor" || role === "institution" || role === "organisation") && <p className="text-xs text-muted-foreground bg-muted rounded-md px-3 py-2">Your account will be reviewed and approved by the MedTrust admin team before full access is granted.</p>}
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? 'Creating account…' : 'Create account'}
+            {isSubmitting ? "Creating account…" : "Create account"}
           </Button>
         </form>
       </CardContent>
       <CardFooter className="justify-center text-sm text-muted-foreground">
-        <Link href="/register" className="text-primary hover:underline">← Choose a different role</Link>
+        <Link href="/register" className="text-primary hover:underline">
+          ← Choose a different role
+        </Link>
       </CardFooter>
     </Card>
   );

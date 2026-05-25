@@ -1,8 +1,8 @@
-'use client';
-import { useAuthStore } from '@/store/auth.store';
-import { InstitutionProfile } from '@/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+"use client";
+import { useAuthStore } from "@/store/store";
+import { InstitutionProfile } from "@/types";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function InstitutionDashboard() {
   const { user } = useAuthStore();
@@ -13,32 +13,21 @@ export default function InstitutionDashboard() {
     <div className="space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold">{institution?.name ?? 'Medical Centre'}</h1>
+          <h1 className="text-2xl font-bold">{institution?.name ?? "Medical Centre"}</h1>
           <p className="text-muted-foreground text-sm">{institution?.address}</p>
         </div>
         {institution?.approvalStatus && (
-          <Badge
-            variant={
-              institution.approvalStatus === 'approved'
-                ? 'success'
-                : institution.approvalStatus === 'rejected'
-                ? 'destructive'
-                : 'warning'
-            }
-            className="capitalize"
-          >
+          <Badge variant={institution.approvalStatus === "approved" ? "success" : institution.approvalStatus === "rejected" ? "destructive" : "warning"} className="capitalize">
             {institution.approvalStatus}
           </Badge>
         )}
       </div>
 
-      {institution?.approvalStatus === 'pending' && (
+      {institution?.approvalStatus === "pending" && (
         <Card className="border-yellow-200 bg-yellow-50">
           <CardHeader className="pb-2">
             <CardTitle className="text-base text-yellow-800">Centre pending review</CardTitle>
-            <CardDescription className="text-yellow-700">
-              Once approved, your centre will appear on the map and accept doctor affiliations.
-            </CardDescription>
+            <CardDescription className="text-yellow-700">Once approved, your centre will appear on the map and accept doctor affiliations.</CardDescription>
           </CardHeader>
         </Card>
       )}

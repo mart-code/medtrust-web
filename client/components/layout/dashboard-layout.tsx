@@ -1,9 +1,9 @@
-'use client';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Sidebar } from './sidebar';
-import { useAuthStore } from '@/store/auth.store';
-import { UserRole } from '@/types';
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Sidebar } from "./sidebar";
+import { useAuthStore } from "@/store/store";
+import { UserRole } from "@/types";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -18,7 +18,7 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
     if (!isAuthenticated()) {
       fetchMe().then(() => {
         if (!useAuthStore.getState().isAuthenticated()) {
-          router.push('/login');
+          router.push("/login");
         }
       });
     }
@@ -27,11 +27,11 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
   useEffect(() => {
     if (user && user.role !== role) {
       const dashboards: Record<UserRole, string> = {
-        patient: '/patient/dashboard',
-        doctor: '/doctor/dashboard',
-        organisation: '/organisation/dashboard',
-        institution: '/institution/dashboard',
-        super_admin: '/admin/dashboard',
+        patient: "/patient/dashboard",
+        doctor: "/doctor/dashboard",
+        organisation: "/organisation/dashboard",
+        institution: "/institution/dashboard",
+        super_admin: "/admin/dashboard",
       };
       router.push(dashboards[user.role]);
     }

@@ -1,5 +1,5 @@
-'use client'
-
+"use client";
+import { useAuthStore } from "@/store/store";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -22,6 +22,22 @@ export default function MediLinkSignup() {
   const [showPassword, setShowPassword] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+
+  const handleRegister = () => {
+    const { register } = useAuthStore.getState();
+    if (role === "patient") {
+      register(formData.email, formData.password, "patient")
+        .then(() => {
+          alert("Registration successful! Please log in.");
+        })
+        .catch(() => {
+          alert("Registration failed. Please check your details and try again.");
+        });
+    } else if (role === "doctor") {
+      // Call doctor registration API
+      alert(`Registering doctor: ${formData.name} with email: ${formData.email}`);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -81,41 +97,20 @@ export default function MediLinkSignup() {
             {/* Full Name */}
             <div className="mb-5">
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Dr. Jane Smith"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
-              />
+              <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Dr. Jane Smith" className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition" />
             </div>
 
             {/* Email */}
             <div className="mb-5">
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="name@medilink.com"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
-              />
+              <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="name@medilink.com" className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition" />
             </div>
 
             {/* Password */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
               <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
-                />
+                <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} placeholder="••••••••" className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" aria-label={showPassword ? "Hide password" : "Show password"}>
                   <span className="material-symbols-outlined text-xl">{showPassword ? "visibility_off" : "visibility"}</span>
                 </button>
@@ -148,7 +143,7 @@ export default function MediLinkSignup() {
             </label>
 
             {/* Submit Button */}
-            <button type="button" className="w-full py-3.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-sm font-semibold tracking-wide transition-colors shadow-sm">
+            <button onClick={handleRegister} type="button" className="w-full py-3.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-sm font-semibold tracking-wide transition-colors shadow-sm">
               Create Secure Account
             </button>
 

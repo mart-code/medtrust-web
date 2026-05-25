@@ -1,10 +1,10 @@
-'use client';
-import { useAuthStore } from '@/store/auth.store';
-import { PatientProfile } from '@/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Stethoscope, Brain, Map, BookOpen } from 'lucide-react';
-import Link from 'next/link';
+"use client";
+import { useAuthStore } from "@/store/store";
+import { PatientProfile } from "@/types";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Stethoscope, Brain, Map, BookOpen } from "lucide-react";
+import Link from "next/link";
 
 export default function PatientDashboard() {
   const { user } = useAuthStore();
@@ -13,9 +13,7 @@ export default function PatientDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">
-          Welcome back{profile?.firstName ? `, ${profile.firstName}` : ''}
-        </h1>
+        <h1 className="text-2xl font-bold">Welcome back{profile?.firstName ? `, ${profile.firstName}` : ""}</h1>
         <p className="text-muted-foreground text-sm mt-1">Here&apos;s your health overview</p>
       </div>
 

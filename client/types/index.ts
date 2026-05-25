@@ -12,12 +12,21 @@ export type Gender = 'male' | 'female' | 'other';
 
 export interface AuthUser {
   id: string;
+  name: string;
   email: string;
   role: UserRole;
+  isAdmin: boolean;
   isEmailVerified: boolean;
   isActive: boolean;
   createdAt: string;
-  profile: PatientProfile | DoctorProfile | OrganisationProfile | InstitutionProfile | null;
+  updatedAt: string;
+  profile:
+    | PatientProfile
+    | DoctorProfile
+    | OrganisationProfile
+    | InstitutionProfile
+    | SuperAdminProfile
+    | null;
 }
 
 export interface PatientProfile {
@@ -85,6 +94,13 @@ export interface InstitutionProfile {
   userId: string;
   institutionId: string;
   institution: MedicalInstitution;
+}
+
+export interface SuperAdminProfile {
+  id: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
 }
 
 export interface Programme {

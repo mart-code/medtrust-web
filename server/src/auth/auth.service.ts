@@ -21,6 +21,29 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UserRole } from '../common/enums';
 
+export interface AuthenticatedUserResponse {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  isAdmin: boolean;
+  isEmailVerified: boolean;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  profile: unknown;
+}
+
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface AuthResult {
+  user: AuthenticatedUserResponse;
+  tokens: AuthTokens;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -55,7 +78,6 @@ export class AuthService {
         passwordHash,
         role: dto.role,
       });
-      console.log(user);
       await manager.save(user);
 
       switch (dto.role) {
@@ -130,7 +152,7 @@ export class AuthService {
       return user;
     });
 
-    return this.generateTokens(createdUser);
+    return this.buildAuthResult(createdUser);
   }
 
   async login(dto: LoginDto) {
@@ -141,7 +163,7 @@ export class AuthService {
     const valid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
-    return this.generateTokens(user);
+    return this.buildAuthResult(user);
   }
 
   async refresh(refreshToken: string) {
@@ -154,14 +176,20 @@ export class AuthService {
     const user = await this.userRepo.findOne({ where: { id: stored.userId } });
     if (!user) throw new UnauthorizedException();
 
-    return this.generateTokens(user);
+    return this.buildAuthResult(user);
   }
 
   async logout(refreshToken: string) {
     await this.usersService.revokeRefreshToken(refreshToken);
   }
 
-  async getMe(userId: string) {
+  async getMe(userId: string): Promise<AuthenticatedUserResponse> {
+    return this.buildAuthenticatedUser(userId);
+  }
+
+  private async buildAuthenticatedUser(
+    userId: string,
+  ): Promise<AuthenticatedUserResponse> {
     const user = await this.userRepo.findOne({ where: { id: userId } });
     if (!user) throw new UnauthorizedException();
 
@@ -191,10 +219,21 @@ export class AuthService {
     }
 
     const { passwordHash: _, ...safeUser } = user;
-    return { ...safeUser, profile };
+    return {
+      ...safeUser,
+      name: this.resolveUserDisplayName(user, profile),
+      isAdmin: user.role === UserRole.SUPER_ADMIN,
+      profile,
+    };
   }
 
-  private async generateTokens(user: User) {
+  private async buildAuthResult(user: User): Promise<AuthResult> {
+    const tokens = await this.generateTokens(user);
+    const authenticatedUser = await this.buildAuthenticatedUser(user.id);
+    return { user: authenticatedUser, tokens };
+  }
+
+  private async generateTokens(user: User): Promise<AuthTokens> {
     const payload = { sub: user.id, email: user.email, role: user.role };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -216,6 +255,50 @@ export class AuthService {
     expiresAt.setDate(expiresAt.getDate() + refreshExpiresInDays);
     await this.usersService.saveRefreshToken(user.id, refreshToken, expiresAt);
 
-    return { accessToken, refreshToken, role: user.role };
+    return { accessToken, refreshToken };
+  }
+
+  private resolveUserDisplayName(user: User, profile: unknown) {
+    if (!profile) {
+      return user.email;
+    }
+
+    if (this.hasFirstAndLastName(profile)) {
+      const fullName = `${profile.firstName} ${profile.lastName}`.trim();
+      return fullName || user.email;
+    }
+
+    if (this.hasName(profile)) {
+      return profile.name || user.email;
+    }
+
+    if (this.hasInstitution(profile)) {
+      return profile.institution?.name || user.email;
+    }
+
+    return user.email;
+  }
+
+  private hasFirstAndLastName(
+    profile: unknown,
+  ): profile is PatientProfile | DoctorProfile | SuperAdminProfile {
+    return (
+      typeof profile === 'object' &&
+      profile !== null &&
+      'firstName' in profile &&
+      'lastName' in profile
+    );
+  }
+
+  private hasName(profile: unknown): profile is OrganisationProfile {
+    return typeof profile === 'object' && profile !== null && 'name' in profile;
+  }
+
+  private hasInstitution(profile: unknown): profile is InstitutionProfile {
+    return (
+      typeof profile === 'object' &&
+      profile !== null &&
+      'institution' in profile
+    );
   }
 }

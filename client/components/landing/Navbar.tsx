@@ -12,11 +12,11 @@ const ShieldCheckIcon = ({ size = 18 }) => (
 
 export default function Navbar() {
   const pathname = usePathname();
-  console.log(pathname.slice(1));
+  const isAuthPage = pathname === "/register" || pathname === "/login";
 
   return (
     <>
-      {pathname === "/register" || pathname === "/login" ? (
+      {isAuthPage ? (
         <header>
           <div className="max-w-7xl mx-auto px-6 h-14 flex flex-col items-center justify-center">
             <div className="flex items-center gap-1.5 text-teal-700 font-bold text-lg tracking-tight">
@@ -35,15 +35,16 @@ export default function Navbar() {
                 MediLink
               </div>
               <nav className="hidden md:flex items-center gap-1">
-                {navLinks.map((link) => (
-                  <a
-                    key={link}
-                    href={`/${link === "Home" ? "" : link.replaceAll(" ", "-").toLowerCase()}`}
-                    className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${link.toLowerCase() === pathname.slice(1) ? "text-teal-700 font-semibold border-b-2 border-teal-600 rounded-none pb-1 " : "text-gray-600 hover:text-teal-700 hover:bg-teal-50"}`}
-                  >
-                    {link}
-                  </a>
-                ))}
+                {navLinks.map((link) => {
+                  const linkPath = link === "Home" ? "" : link.replaceAll(" ", "-").toLowerCase();
+                  const isActive = pathname.slice(1) === linkPath;
+
+                  return (
+                    <a key={link} href={`/${linkPath}`} className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${isActive ? "text-teal-700 font-semibold border-b-2 border-teal-600 rounded-none pb-1 " : "text-gray-600 hover:text-teal-700 hover:bg-teal-50"}`}>
+                      {link}
+                    </a>
+                  );
+                })}
               </nav>
             </div>
             <div className="flex items-center gap-3">
