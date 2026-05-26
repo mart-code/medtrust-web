@@ -23,30 +23,6 @@
   --radius: 0.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: 222 84% 5%;
-    --foreground: 210 40% 98%;
-    --card: 222 84% 5%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 84% 5%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 199 89% 48%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 217 33% 18%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 18%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 33% 18%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 18%;
-    --input: 217 33% 18%;
-    --ring: 199 89% 48%;
-  }
-}
-
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -65,13 +41,15 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-  --font-sans: var(--font-geist-sans), Arial, sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
-  --font-display: var(--font-playfair);
+  --font-sans: "Segoe UI", "Inter", Arial, sans-serif;
+  --font-mono: "Consolas", "SFMono-Regular", monospace;
+  --font-display: "Georgia", "Times New Roman", serif;
 }
 
 body {
-  background: hsl(var(--background));
+  background:
+    radial-gradient(circle at top, rgba(125, 211, 252, 0.18), transparent 30%),
+    linear-gradient(180deg, #f8fbff 0%, #f3f8fc 100%);
   color: hsl(var(--foreground));
   font-family: var(--font-sans, Arial, sans-serif);
 }
@@ -83,4 +61,3 @@ body {
 .glass-card {
   @apply bg-white/70 backdrop-blur-md;
 }
-

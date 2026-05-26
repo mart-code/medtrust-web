@@ -1,5 +1,5 @@
 "use client";
-import { useAuthStore } from "@/store/store";
+import { useAuth } from "@/components/providers/auth-provider";
 import { PatientProfile } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Stethoscope, Brain, Map, BookOpen } from "lucide-react";
 import Link from "next/link";
 
 export default function PatientDashboard() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const profile = user?.profile as PatientProfile | null;
 
   return (
@@ -18,7 +18,7 @@ export default function PatientDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="hover:border-primary/50 transition-colors">
+        <Card className="border-slate-200 bg-white/90 shadow-sm transition-colors hover:border-sky-200">
           <CardHeader className="pb-2">
             <Stethoscope className="h-5 w-5 text-primary mb-1" />
             <CardTitle className="text-base">Find a Doctor</CardTitle>
@@ -31,7 +31,7 @@ export default function PatientDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="hover:border-primary/50 transition-colors">
+        <Card className="border-slate-200 bg-white/90 shadow-sm transition-colors hover:border-sky-200">
           <CardHeader className="pb-2">
             <Brain className="h-5 w-5 text-primary mb-1" />
             <CardTitle className="text-base">AI Health Analysis</CardTitle>
@@ -44,7 +44,7 @@ export default function PatientDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="hover:border-primary/50 transition-colors">
+        <Card className="border-slate-200 bg-white/90 shadow-sm transition-colors hover:border-sky-200">
           <CardHeader className="pb-2">
             <BookOpen className="h-5 w-5 text-primary mb-1" />
             <CardTitle className="text-base">Health Programmes</CardTitle>
@@ -57,7 +57,7 @@ export default function PatientDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="hover:border-primary/50 transition-colors">
+        <Card className="border-slate-200 bg-white/90 shadow-sm transition-colors hover:border-sky-200">
           <CardHeader className="pb-2">
             <Map className="h-5 w-5 text-primary mb-1" />
             <CardTitle className="text-base">Nearby Centres</CardTitle>

@@ -1,8 +1,7 @@
 "use client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/query-client";
-import { Provider } from "react-redux";
-import { store } from "@/store/store";
+import { AuthProvider } from "@/components/providers/auth-provider";
 import { ToastContainer } from "react-toastify";
 
  function ToastProvider({ children }: { children: React.ReactNode }) {
@@ -17,10 +16,10 @@ import { ToastContainer } from "react-toastify";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
         <ToastProvider>{children}</ToastProvider>
-      </QueryClientProvider>
-    </Provider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

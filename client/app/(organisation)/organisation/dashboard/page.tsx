@@ -1,5 +1,5 @@
 "use client";
-import { useAuthStore } from "@/store/store";
+import { useAuth } from "@/components/providers/auth-provider";
 import { OrganisationProfile } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,7 @@ import Link from "next/link";
 import { BookOpen, Plus } from "lucide-react";
 
 export default function OrganisationDashboard() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const profile = user?.profile as OrganisationProfile | null;
 
   return (
@@ -26,7 +26,7 @@ export default function OrganisationDashboard() {
       </div>
 
       {profile?.approvalStatus === "pending" && (
-        <Card className="border-yellow-200 bg-yellow-50">
+        <Card className="border-yellow-200 bg-yellow-50 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-base text-yellow-800">Account pending review</CardTitle>
             <CardDescription className="text-yellow-700">Your organisation is being reviewed by the MedTrust admin team.</CardDescription>
@@ -34,7 +34,7 @@ export default function OrganisationDashboard() {
         </Card>
       )}
 
-      <Card>
+      <Card className="border-slate-200 bg-white/90 shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>

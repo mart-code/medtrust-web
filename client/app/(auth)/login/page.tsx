@@ -4,9 +4,8 @@ import Navbar from "@/components/landing/Navbar";
 import { useState } from "react";
 import Link from "next/link";
 import { ShieldCheckIcon, LockIcon, MailIcon, BadgeShield, BadgeLock, BadgeCert, GlobeIcon, ShareIcon, GoogleColorIcon, SSOIcon } from "@/components/ui/MultiIcons";
-import { useAuthStore } from "@/store/store";
-import { setUser, useLogin } from "@/slices/userSlice";
-import { useDispatch } from "react-redux";
+import { useAuth } from "@/components/providers/auth-provider";
+import { getErrorMessage } from "@/lib/auth";
 
 export default function MediLinkLogin() {
   const router = useRouter();
@@ -14,16 +13,16 @@ export default function MediLinkLogin() {
   const [remember, setRemember] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const dispatch = useDispatch();
-  const loginMutation = useLogin();
+  const { login, getDashboardPath } = useAuth();
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    // Add your login logic here
-
-    const { user } = await loginMutation.mutateAsync({ email, password });
-    dispatch(setUser(user));
-    router.push("/patient/dashboard");
+    try {
+      const user = await login({ email, password });
+      router.push(getDashboardPath(user.role));
+    } catch (error) {
+      console.error(getErrorMessage(error));
+    }
   };
 
   return (
@@ -95,7 +94,7 @@ export default function MediLinkLogin() {
           </label>
 
           {/* Sign In Button */}
-          <button onClick={handleLoginSubmit} className="w-full py-3 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-sm font-semibold tracking-wide transition-colors mb-5">
+          <button type="submit" onClick={handleLoginSubmit} className="w-full py-3 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-sm font-semibold tracking-wide transition-colors mb-5">
             Sign In to Secure Portal
           </button>
 

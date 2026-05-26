@@ -1,7 +1,8 @@
 "use client";
-import { useAuthStore } from "@/store/store";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/providers/auth-provider";
 
 const ShieldIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -18,24 +19,32 @@ const LockIcon = () => (
 );
 
 export default function MediLinkSignup() {
+  const router = useRouter();
+  const { register, getDashboardPath } = useAuth();
   const [role, setRole] = useState("patient");
   const [showPassword, setShowPassword] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
 
-  const handleRegister = () => {
-    const { register } = useAuthStore.getState();
+  const handleRegister = async () => {
     if (role === "patient") {
-      register(formData.email, formData.password, "patient")
-        .then(() => {
-          alert("Registration successful! Please log in.");
-        })
-        .catch(() => {
-          alert("Registration failed. Please check your details and try again.");
-        });
+      const names = formData.name.trim().split(" ");
+      const firstName = names[0] ?? "";
+      const lastName = names.slice(1).join(" ") || "Patient";
+      const user = await register({
+        email: formData.email,
+        password: formData.password,
+        role: "patient",
+        firstName,
+        lastName,
+      });
+      router.push(getDashboardPath(user.role));
     } else if (role === "doctor") {
-      // Call doctor registration API
-      alert(`Registering doctor: ${formData.name} with email: ${formData.email}`);
+      router.push("/register/doctor");
+    } else if (role === "organisation") {
+      router.push("/register/organisation");
+    } else if (role === "institution") {
+      router.push("/register/institution");
     }
   };
 
@@ -83,7 +92,7 @@ export default function MediLinkSignup() {
             <p className="text-gray-500 text-sm mb-8">Join the future of healthcare technology.</p>
 
             {/* Role Toggle */}
-            <div className="grid grid-cols-2 gap-3 mb-7">
+            <div className="grid grid-cols-2 gap-3 mb-3">
               <button onClick={() => setRole("patient")} className={`flex flex-col items-center gap-1.5 py-4 rounded-xl border text-sm font-medium transition-all ${role === "patient" ? "border-teal-600 bg-teal-50 text-teal-700" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
                 <span className="material-symbols-outlined text-xl">person</span>
                 Patient
@@ -91,6 +100,16 @@ export default function MediLinkSignup() {
               <button onClick={() => setRole("doctor")} className={`flex flex-col items-center gap-1.5 py-4 rounded-xl border text-sm font-medium transition-all ${role === "doctor" ? "border-teal-600 bg-teal-50 text-teal-700" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
                 <span className="material-symbols-outlined text-xl">medical_services</span>
                 Doctor
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mb-7">
+              <button onClick={() => setRole("organisation")} className={`flex flex-col items-center gap-1.5 py-4 rounded-xl border text-sm font-medium transition-all ${role === "organisation" ? "border-teal-600 bg-teal-50 text-teal-700" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
+                <span className="material-symbols-outlined text-xl">groups</span>
+                Organisation
+              </button>
+              <button onClick={() => setRole("institution")} className={`flex flex-col items-center gap-1.5 py-4 rounded-xl border text-sm font-medium transition-all ${role === "institution" ? "border-teal-600 bg-teal-50 text-teal-700" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
+                <span className="material-symbols-outlined text-xl">local_hospital</span>
+                Institution
               </button>
             </div>
 

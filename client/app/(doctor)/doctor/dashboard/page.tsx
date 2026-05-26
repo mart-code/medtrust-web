@@ -1,11 +1,11 @@
 "use client";
-import { useAuthStore } from "@/store/store";
+import { useAuth } from "@/components/providers/auth-provider";
 import { DoctorProfile } from "@/types";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export default function DoctorDashboard() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const profile = user?.profile as DoctorProfile | null;
 
   return (
@@ -25,7 +25,7 @@ export default function DoctorDashboard() {
       </div>
 
       {profile?.approvalStatus === "pending" && (
-        <Card className="border-yellow-200 bg-yellow-50">
+        <Card className="border-yellow-200 bg-yellow-50 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-base text-yellow-800">Account pending review</CardTitle>
             <CardDescription className="text-yellow-700">Your account is being reviewed by the MedTrust admin team. You&apos;ll receive full access once approved.</CardDescription>
@@ -35,19 +35,19 @@ export default function DoctorDashboard() {
 
       {profile?.approvalStatus === "approved" && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card>
+          <Card className="border-slate-200 bg-white/90 shadow-sm">
             <CardHeader className="pb-1">
               <CardTitle className="text-3xl font-bold text-primary">0</CardTitle>
               <CardDescription>Active Patients</CardDescription>
             </CardHeader>
           </Card>
-          <Card>
+          <Card className="border-slate-200 bg-white/90 shadow-sm">
             <CardHeader className="pb-1">
               <CardTitle className="text-3xl font-bold text-primary">0</CardTitle>
               <CardDescription>Pending Requests</CardDescription>
             </CardHeader>
           </Card>
-          <Card>
+          <Card className="border-slate-200 bg-white/90 shadow-sm">
             <CardHeader className="pb-1">
               <CardTitle className="text-3xl font-bold text-primary">0</CardTitle>
               <CardDescription>Programmes Joined</CardDescription>

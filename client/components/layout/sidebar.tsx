@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useAuthStore } from "@/store/store";
+import { useAuth } from "@/components/providers/auth-provider";
 import { LayoutDashboard, User, Stethoscope, Users, BookOpen, MessageSquare, Brain, Map, Bell, Settings, LogOut, ShieldCheck, Building2, ClipboardList } from "lucide-react";
 
 interface NavItem {
@@ -64,28 +64,26 @@ interface SidebarProps {
 
 export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { logout, user } = useAuthStore();
+  const { logout, user } = useAuth();
   const items = NAV_ITEMS[role] ?? [];
 
   const handleLogout = async () => {
     await logout();
-    router.push("/login");
   };
 
   return (
-    <aside className="flex flex-col h-full w-64 border-r bg-card px-3 py-4 gap-1">
+    <aside className="flex h-full w-72 flex-col gap-1 border-r border-sky-100 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-4 py-5 shadow-[0_1px_0_rgba(148,163,184,0.08)]">
       <div className="px-3 py-2 mb-4">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 shadow-sm">
             <span className="text-white font-bold text-sm">M</span>
           </div>
-          <span className="font-semibold text-lg">MedTrust</span>
+          <span className="text-lg font-semibold text-slate-900">MedTrust</span>
         </Link>
       </div>
 
       <div className="px-3 mb-3">
-        <Badge variant="secondary" className="capitalize text-xs">
+        <Badge variant="secondary" className="capitalize border border-sky-100 bg-sky-50 text-xs text-sky-700">
           {role.replace("_", " ")}
         </Badge>
         {user && "profile" in user && user.profile && <p className="text-xs text-muted-foreground mt-1 truncate">{(user.profile as { firstName?: string; name?: string }).firstName ?? (user.profile as { name?: string }).name ?? user.email}</p>}
@@ -96,7 +94,7 @@ export function Sidebar({ role }: SidebarProps) {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link key={item.href} href={item.href}>
-              <span className={cn("flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors", active ? "bg-primary text-primary-foreground font-medium" : "text-muted-foreground hover:bg-accent hover:text-foreground")}>
+              <span className={cn("flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors", active ? "bg-sky-600 text-white shadow-sm" : "text-slate-600 hover:bg-sky-50 hover:text-slate-900")}>
                 <item.icon className="h-4 w-4 shrink-0" />
                 {item.label}
                 {item.badge && (
@@ -111,7 +109,7 @@ export function Sidebar({ role }: SidebarProps) {
       </nav>
 
       <div className="pt-2 border-t">
-        <Button variant="ghost" size="sm" className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive" onClick={handleLogout}>
+        <Button variant="ghost" size="sm" className="w-full justify-start gap-3 rounded-xl text-slate-600 hover:bg-red-50 hover:text-red-600" onClick={handleLogout}>
           <LogOut className="h-4 w-4" />
           Sign out
         </Button>

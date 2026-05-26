@@ -1,11 +1,11 @@
 "use client";
-import { useAuthStore } from "@/store/store";
+import { useAuth } from "@/components/providers/auth-provider";
 import { InstitutionProfile } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export default function InstitutionDashboard() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const profile = user?.profile as InstitutionProfile | null;
   const institution = profile?.institution;
 
@@ -24,7 +24,7 @@ export default function InstitutionDashboard() {
       </div>
 
       {institution?.approvalStatus === "pending" && (
-        <Card className="border-yellow-200 bg-yellow-50">
+        <Card className="border-yellow-200 bg-yellow-50 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-base text-yellow-800">Centre pending review</CardTitle>
             <CardDescription className="text-yellow-700">Once approved, your centre will appear on the map and accept doctor affiliations.</CardDescription>

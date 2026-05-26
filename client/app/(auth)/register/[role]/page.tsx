@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuthStore } from "@/store/store";
+import { useAuth } from "@/components/providers/auth-provider";
 
 const baseSchema = {
   email: z.string().email("Invalid email address"),
@@ -87,7 +87,7 @@ const ROLE_DASHBOARDS: Record<string, string> = {
 export default function RegisterRolePage() {
   const { role } = useParams<{ role: string }>();
   const router = useRouter();
-  const { register: registerUser } = useAuthStore();
+  const { register: registerUser } = useAuth();
   const [serverError, setServerError] = useState("");
 
   const config = ROLE_CONFIG[role];
