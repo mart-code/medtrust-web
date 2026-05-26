@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchCurrentUser, loginUser, logoutUser, registerUser } from "./userSlice";
+import { fetchCurrentUser, logoutUser, registerUser } from "./userSlice";
 
 interface AuthState {
   status: "idle" | "loading" | "authenticated" | "unauthenticated";
@@ -29,18 +29,18 @@ const authSlice = createSlice({
         state.status = "unauthenticated";
         state.error = action.payload ?? "Unable to fetch the current user.";
       })
-      .addCase(loginUser.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state) => {
-        state.status = "authenticated";
-        state.error = null;
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.status = "unauthenticated";
-        state.error = action.payload ?? "Login failed.";
-      })
+      // .addCase(loginUser.pending, (state) => {
+      //   state.status = "loading";
+      //   state.error = null;
+      // })
+      // .addCase(loginUser.fulfilled, (state) => {
+      //   state.status = "authenticated";
+      //   state.error = null;
+      // })
+      // .addCase(loginUser.rejected, (state, action) => {
+      //   state.status = "unauthenticated";
+      //   state.error = action.payload ?? "Login failed.";
+      // })
       .addCase(registerUser.pending, (state) => {
         state.status = "loading";
         state.error = null;

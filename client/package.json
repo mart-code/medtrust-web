@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -31,8 +31,10 @@
     "react-dom": "19.2.3",
     "react-dropzone": "^14.2.0",
     "react-hook-form": "^7.50.0",
+    "react-hot-toast": "^2.6.0",
     "react-leaflet": "^4.2.1",
     "react-redux": "^9.3.0",
+    "react-toastify": "^11.1.0",
     "socket.io-client": "^4.7.0",
     "tailwind-merge": "^2.5.0",
     "zod": "^4.3.6",

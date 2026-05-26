@@ -1,24 +1,29 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/landing/Navbar";
 import { useState } from "react";
 import Link from "next/link";
 import { ShieldCheckIcon, LockIcon, MailIcon, BadgeShield, BadgeLock, BadgeCert, GlobeIcon, ShareIcon, GoogleColorIcon, SSOIcon } from "@/components/ui/MultiIcons";
 import { useAuthStore } from "@/store/store";
+import { setUser, useLogin } from "@/slices/userSlice";
+import { useDispatch } from "react-redux";
 
 export default function MediLinkLogin() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const loginMutation = useLogin();
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Add your login logic here
-    const { login } = useAuthStore.getState();
-    login(email, password).catch(() => {
-      alert("Login failed. Please check your credentials and try again.");
-    });
+
+    const { user } = await loginMutation.mutateAsync({ email, password });
+    dispatch(setUser(user));
+    router.push("/patient/dashboard");
   };
 
   return (

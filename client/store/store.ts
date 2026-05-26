@@ -7,7 +7,7 @@ import {
   LoginCredentials,
   RegisterPayload,
   fetchCurrentUser,
-  loginUser,
+  
   logoutUser,
   registerUser,
 } from "../slices/userSlice";
@@ -42,14 +42,14 @@ function buildAuthStoreApi(dispatch: AppDispatch, getState: () => RootState) {
     fetchMe() {
       return dispatch(fetchCurrentUser()).unwrap();
     },
-    login(emailOrCredentials: string | LoginCredentials, password?: string) {
-      const credentials =
-        typeof emailOrCredentials === "string"
-          ? { email: emailOrCredentials, password: password ?? "" }
-          : emailOrCredentials;
+    // login(emailOrCredentials: string | LoginCredentials, password?: string) {
+    //   const credentials =
+    //     typeof emailOrCredentials === "string"
+    //       ? { email: emailOrCredentials, password: password ?? "" }
+    //       : emailOrCredentials;
 
-      return dispatch(loginUser(credentials)).unwrap();
-    },
+    //   return dispatch(loginUser(credentials)).unwrap();
+    // },
     register(
       emailOrPayload: string | RegisterPayload,
       password?: string,

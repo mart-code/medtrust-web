@@ -1,7 +1,9 @@
 import { api } from "@/lib/api";
 import { ApiResponse, AuthUser, UserRole } from "@/types";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import toast from "react-hot-toast";
 
 export interface LoginCredentials {
   email: string;
@@ -55,52 +57,56 @@ function getErrorMessage(error: unknown) {
   return message ?? "Something went wrong.";
 }
 
-export const fetchCurrentUser = createAsyncThunk<AuthUser, void, { rejectValue: string }>(
-  "user/fetchCurrentUser",
-  async (_, thunkAPI) => {
-    try {
-      const response = await api.get<ApiResponse<AuthUser>>("/auth/me");
-      return response.data.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(getErrorMessage(error));
-    }
-  },
-);
+export const fetchCurrentUser = createAsyncThunk<AuthUser, void, { rejectValue: string }>("user/fetchCurrentUser", async (_, thunkAPI) => {
+  try {
+    const response = await api.get<ApiResponse<AuthUser>>("/auth/me");
+    return response.data.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(getErrorMessage(error));
+  }
+});
 
-export const loginUser = createAsyncThunk<AuthUser, LoginCredentials, { rejectValue: string }>(
-  "user/loginUser",
-  async (credentials, thunkAPI) => {
-    try {
-      const response = await api.post<ApiResponse<AuthResponseData>>("/auth/login", credentials);
-      return response.data.data.user;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(getErrorMessage(error));
-    }
-  },
-);
+// export const loginUser = createAsyncThunk<AuthUser, LoginCredentials, { rejectValue: string }>("user/loginUser", async (credentials, thunkAPI) => {
+//   try {
+//     const response = await api.post<ApiResponse<AuthResponseData>>("/auth/login", credentials);
+//     response && toast.success("Login successful!");
+//     return response.data.data.user;
+//   } catch (error) {
+//     toast.error(getErrorMessage(error));
+//     return thunkAPI.rejectWithValue(getErrorMessage(error));
+//   }
+// });
 
-export const registerUser = createAsyncThunk<AuthUser, RegisterPayload, { rejectValue: string }>(
-  "user/registerUser",
-  async (payload, thunkAPI) => {
-    try {
-      const response = await api.post<ApiResponse<AuthResponseData>>("/auth/register", payload);
-      return response.data.data.user;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(getErrorMessage(error));
+export const useLogin = () => {
+  return useMutation({
+    mutationFn: async (payload: LoginCredentials) => {
+      const {data} = await api.post('/auth/login', payload);
+      toast.success("Login successful!");
+      return data.data;
+     
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error));
     }
-  },
-);
+  })
+}
 
-export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
-  "user/logoutUser",
-  async (_, thunkAPI) => {
-    try {
-      await api.post("/auth/logout");
-    } catch (error) {
-      return thunkAPI.rejectWithValue(getErrorMessage(error));
-    }
-  },
-);
+export const registerUser = createAsyncThunk<AuthUser, RegisterPayload, { rejectValue: string }>("user/registerUser", async (payload, thunkAPI) => {
+  try {
+    const response = await api.post<ApiResponse<AuthResponseData>>("/auth/register", payload);
+    return response.data.data.user;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(getErrorMessage(error));
+  }
+});
+
+export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>("user/logoutUser", async (_, thunkAPI) => {
+  try {
+    await api.post("/auth/logout");
+  } catch (error) {
+    return thunkAPI.rejectWithValue(getErrorMessage(error));
+  }
+});
 
 const userSlice = createSlice({
   name: "user",
@@ -141,23 +147,23 @@ const userSlice = createSlice({
         state.isAuthenticated = false;
         state.error = action.payload ?? "Unable to fetch the current user.";
       })
-      .addCase(loginUser.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.initialized = true;
-        state.user = action.payload;
-        state.isAuthenticated = true;
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.initialized = true;
-        state.user = null;
-        state.isAuthenticated = false;
-        state.error = action.payload ?? "Login failed.";
-      })
+      // .addCase(loginUser.pending, (state) => {
+      //   state.isLoading = true;
+      //   state.error = null;
+      // })
+      // .addCase(loginUser.fulfilled, (state, action) => {
+      //   state.isLoading = false;
+      //   state.initialized = true;
+      //   state.user = action.payload;
+      //   state.isAuthenticated = true;
+      // })
+      // .addCase(loginUser.rejected, (state, action) => {
+      //   state.isLoading = false;
+      //   state.initialized = true;
+      //   state.user = null;
+      //   state.isAuthenticated = false;
+      //   state.error = action.payload ?? "Login failed.";
+      // })
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
